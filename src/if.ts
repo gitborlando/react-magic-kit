@@ -1,5 +1,6 @@
 import MagicString from 'magic-string'
 import { JSXElement } from 'oxc-parser'
+import { defaultOptions } from './options'
 
 export const dataIfJsxElements: JSXElement[] = []
 
@@ -8,7 +9,7 @@ export function collectDataIfJsx(node: JSXElement) {
     (attr) =>
       attr.type === 'JSXAttribute' &&
       attr.name.type === 'JSXIdentifier' &&
-      attr.name.name === 'data-if'
+      attr.name.name === defaultOptions.if
   )
   if (!hasDataIf) return
   dataIfJsxElements.push(node)
@@ -28,7 +29,7 @@ function walkDataIf(node: JSXElement, s: MagicString) {
     if (
       attr.type === 'JSXAttribute' &&
       attr.name.type === 'JSXIdentifier' &&
-      attr.name.name === 'data-if'
+      attr.name.name === defaultOptions.if
     ) {
       dataIfValue = s.slice(...attr.value!.range!)
       s.remove(...attr.range!)

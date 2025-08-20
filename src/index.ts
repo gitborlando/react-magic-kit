@@ -1,10 +1,10 @@
 import MagicString from 'magic-string'
-import { writeFileSync } from 'node:fs'
+import { appendFileSync, existsSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import oxc from 'oxc-parser'
 import { walk } from 'oxc-walker'
-import { collectDataIfJsx, dataIfJsxElements, walkAllDataIfJsx } from './data-if'
 import { setupDts } from './dts'
+import { collectDataIfJsx, dataIfJsxElements, walkAllDataIfJsx } from './if'
 import { DeepOptional, MagicOption, setOptions } from './options'
 import { walkUseState, walkUseStateSetter } from './use-state'
 
@@ -50,10 +50,17 @@ export function reactMagicKit(
 
   walkAllDataIfJsx(s)
 
+  const code = s.toString()
+
   const dts = setupDts()
   if (dts) {
-    writeFileSync(path.join(process.cwd(), dts.path), dts.content)
+    writeFileSync(cwd(dts.path), dts.content)
+    if (existsSync(cwd('.gitignore'))) {
+      appendFileSync(cwd('.gitignore'), `\n${dts.path}`)
+    }
   }
 
-  return s.toString()
+  return code
 }
+
+const cwd = (p: string) => path.resolve(process.cwd(), p)

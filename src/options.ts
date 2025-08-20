@@ -7,7 +7,8 @@ export type MagicOption = {
         useState: string
         setState: string
       }
-  dts: string
+  dts: string | false
+  if: string
 }
 
 export type DeepOptional<T> = {
@@ -23,6 +24,7 @@ export let defaultOptions: MagicOption = {
     useState: 'useMagicState',
     setState: 'setMagicState',
   },
+  if: 'magic-if',
   dts: 'react-magic-kit.d.ts',
 }
 

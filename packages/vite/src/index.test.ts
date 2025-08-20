@@ -1,15 +1,16 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { reactMagicKit } from './index'
+import reactMagicKitPlugin from '.'
 
 describe('vite-plugin-react-magic-kit', () => {
   let plugin: any
 
   beforeEach(() => {
     vi.clearAllMocks()
-    plugin = reactMagicKit({
+    plugin = reactMagicKitPlugin({
       state: {
         setState: 'setTheState',
       },
+      if: 'abc-if',
     })
   })
 
@@ -42,7 +43,7 @@ describe('vite-plugin-react-magic-kit', () => {
     it('should transform JSX files with data-if', () => {
       const code = `
         export function Component({ show }) {
-          return <div data-if={show}>Content</div>
+          return <div abc-if={show}>Content</div>
         }
       `
       const id = 'src/Component.jsx'
