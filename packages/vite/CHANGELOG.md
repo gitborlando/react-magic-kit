@@ -1,5 +1,11 @@
 # @react-magic-kit/vite
 
+## 1.0.2
+
+### Patch Changes
+
+- 4802418: add single tests
+
 ## 1.0.1
 
 ### Patch Changes
