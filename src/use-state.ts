@@ -11,12 +11,10 @@ export function walkUseState(node: VariableDeclarator, s: MagicString) {
   if (node.id.type !== 'Identifier') return
 
   const id = node.id.name
-  const [idStart, idEnd] = node.id.range!
-  const [calleeStart, calleeEnd] = node.init.callee.range!
   const setter = `set${id[0].toUpperCase()}${id.slice(1)}`
 
-  s.overwrite(idStart, idEnd, `[${id}, ${setter}]`)
-  s.overwrite(calleeStart, calleeEnd, `useState`)
+  s.overwrite(...node.id.range!, `[${id}, ${setter}]`)
+  s.overwrite(...node.init.callee.range!, `useState`)
 
   if (!state.isAddUseStateImport) {
     s.prepend(`import { useState } from 'react'\n`)
@@ -33,11 +31,8 @@ export function walkUseStateSetter(node: CallExpression, s: MagicString) {
   if (node.arguments[0].type !== 'Identifier') return
 
   const id = node.arguments[0].name
-  const [idStart] = node.arguments[0].range!
-  const [valueStart] = node.arguments[1].range!
-  const [calleeStart, calleeEnd] = node.callee.range!
   const setter = `set${id[0].toUpperCase()}${id.slice(1)}`
 
-  s.overwrite(calleeStart, calleeEnd, setter)
-  s.remove(idStart, valueStart)
+  s.overwrite(...node.callee.range!, setter)
+  s.remove(node.arguments[0].start, node.arguments[1].end)
 }
