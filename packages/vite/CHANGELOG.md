@@ -1,5 +1,11 @@
 # @react-magic-kit/vite
 
+## 1.0.4
+
+### Patch Changes
+
+- fd3a46f: fixed some bug
+
 ## 1.0.3
 
 ### Patch Changes
