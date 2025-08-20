@@ -1,5 +1,11 @@
 # @react-magic-kit/vite
 
+## 1.0.3
+
+### Patch Changes
+
+- aba0a80: custom if attribute
+
 ## 1.0.2
 
 ### Patch Changes
