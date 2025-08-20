@@ -10,5 +10,5 @@ export function setupDts() {
   declare function ${setState}<T>(id: T, value: T | ((prev: T) => T)): void
   `
 
-  return { content, path: defaultOptions.dts }
+  return { content: content.trim(), path: defaultOptions.dts }
 }

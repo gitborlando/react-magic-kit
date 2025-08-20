@@ -8,7 +8,7 @@ import { setupDts } from './dts'
 import { DeepOptional, MagicOption, setOptions } from './options'
 import { walkUseState, walkUseStateSetter } from './use-state'
 
-export type { MagicOption }
+export type { DeepOptional, MagicOption }
 
 export function reactMagicKit(
   sourceCode: string,

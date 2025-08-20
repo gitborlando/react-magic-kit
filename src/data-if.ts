@@ -1,12 +1,9 @@
 import MagicString from 'magic-string'
 import { JSXElement } from 'oxc-parser'
-import { defaultOptions } from './options'
 
 export const dataIfJsxElements: JSXElement[] = []
 
 export function collectDataIfJsx(node: JSXElement) {
-  if (!defaultOptions.dataIf) return
-
   const hasDataIf = node.openingElement.attributes.some(
     (attr) =>
       attr.type === 'JSXAttribute' &&

@@ -1,7 +1,9 @@
-import { MagicOption, reactMagicKit as reactMagicKitCore } from 'core'
+import { DeepOptional, MagicOption, reactMagicKit as reactMagicKitCore } from 'core'
 import { Plugin } from 'vite'
 
-export function reactMagicKit(options?: MagicOption): Plugin {
+export default function reactMagicKitPlugin(
+  options?: DeepOptional<MagicOption>
+): Plugin {
   return {
     name: 'vite-plugin-react-magic-kit',
     enforce: 'pre',
