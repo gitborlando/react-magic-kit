@@ -1,17 +1,17 @@
 import MagicString from 'magic-string'
 import { JSXElement } from 'oxc-parser'
-import { options } from 'packages/core/src/options'
+import { defaultOptions } from './options'
 
 export const dataIfJsxElements: JSXElement[] = []
 
 export function collectDataIfJsx(node: JSXElement) {
-  if (!options.dataIf) return
+  if (!defaultOptions.dataIf) return
 
   const hasDataIf = node.openingElement.attributes.some(
     (attr) =>
       attr.type === 'JSXAttribute' &&
       attr.name.type === 'JSXIdentifier' &&
-      attr.name.name === 'data-if',
+      attr.name.name === 'data-if'
   )
   if (!hasDataIf) return
   dataIfJsxElements.push(node)

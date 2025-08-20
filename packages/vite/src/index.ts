@@ -1,12 +1,9 @@
-import {
-  MagicOption,
-  reactMagicKit as reactMagicKitCore,
-} from '@react-magic-kit/core'
+import { MagicOption, reactMagicKit as reactMagicKitCore } from 'core'
 import { Plugin } from 'vite'
 
 export function reactMagicKit(options?: MagicOption): Plugin {
   return {
-    name: 'react-magic-kit',
+    name: 'vite-plugin-react-magic-kit',
     enforce: 'pre',
     transform(code, id) {
       const suffix = getSuffix(id)

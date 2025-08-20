@@ -1,6 +1,6 @@
 {
-  "name": "@react-magic-kit/vite",
-  "version": "1.0.1",
+  "name": "vite-plugin-react-magic-kit",
+  "version": "1.0.0",
   "description": "",
   "keywords": [],
   "author": "",
@@ -26,9 +26,11 @@
     "test:run": "vitest run"
   },
   "dependencies": {
-    "@react-magic-kit/core": "workspace:*"
+    "oxc-parser": "^0.82.2",
+    "oxc-walker": "^0.4.0",
+    "magic-string": "^0.30.17",
+    "defu": "^6.1.4"
   },
-  "devDependencies": {},
   "peerDependencies": {
     "vite": "^7.0.0"
   }

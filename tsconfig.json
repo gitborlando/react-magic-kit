@@ -18,7 +18,10 @@
     "strict": true,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "core": ["src/index.ts"]
+    }
   },
-  "include": ["packages"]
+  "include": ["packages", "src"]
 }

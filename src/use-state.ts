@@ -1,13 +1,13 @@
 import MagicString from 'magic-string'
 import { CallExpression, VariableDeclarator } from 'oxc-parser'
-import { options, state } from './options'
+import { defaultOptions, state } from './options'
 
 export function walkUseState(node: VariableDeclarator, s: MagicString) {
-  if (!options.state) return
+  if (!defaultOptions.state) return
 
   if (node.init?.type !== 'CallExpression') return
   if (node.init.callee.type !== 'Identifier') return
-  if (node.init.callee.name !== options.state.useState) return
+  if (node.init.callee.name !== defaultOptions.state.useState) return
   if (node.id.type !== 'Identifier') return
 
   const id = node.id.name
@@ -25,10 +25,10 @@ export function walkUseState(node: VariableDeclarator, s: MagicString) {
 }
 
 export function walkUseStateSetter(node: CallExpression, s: MagicString) {
-  if (!options.state) return
+  if (!defaultOptions.state) return
 
   if (node.callee.type !== 'Identifier') return
-  if (node.callee.name !== options.state.setState) return
+  if (node.callee.name !== defaultOptions.state.setState) return
   if (node.arguments.length !== 2) return
   if (node.arguments[0].type !== 'Identifier') return
 
