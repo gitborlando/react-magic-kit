@@ -1,41 +1,51 @@
-import { walk } from 'ast-walker-scope'
 import MagicString from 'magic-string'
-import { MagicOption, setState, state } from './state'
-import { walkUseStateDeclaration, walkUseStateSetter } from './use-state'
+import oxc from 'oxc-parser'
+import { walk } from 'oxc-walker'
+import {
+  collectDataIfJsx,
+  dataIfJsxElements,
+  walkAllDataIfJsx,
+} from 'packages/core/src/data-if'
+import { walkUseState, walkUseStateSetter } from 'packages/core/src/use-state'
+import { MagicOption, setOptions } from './options'
 
-export default function reactMagicKit(code: string, options?: MagicOption) {
-  setState(options)
+export type { MagicOption }
 
+export function reactMagicKit(code: string, suffix: string, options?: MagicOption) {
+  if (!['js', 'ts', 'jsx', 'tsx'].includes(suffix)) {
+    throw new Error(`Invalid suffix: ${suffix}`)
+  }
+
+  setOptions(options)
+
+  const res = oxc.parseSync(`index.${suffix}`, code, {
+    astType: suffix === 'tsx' ? 'ts' : 'js',
+    range: true,
+  })
+  if (res.errors.length > 0) {
+    throw new Error(res.errors[0].message)
+  }
+
+  dataIfJsxElements.length = 0
   const s = new MagicString(code)
-  walk(
-    code,
-    {
-      enter(this, node) {
-        switch (node.type) {
-          case 'VariableDeclarator':
-            walkUseStateDeclaration.call(this, node, s)
-            break
-          case 'CallExpression':
-            walkUseStateSetter.call(this, node, s)
-            break
-        }
-      },
+
+  walk(res.program, {
+    enter(node) {
+      switch (node.type) {
+        case 'VariableDeclarator':
+          walkUseState(node, s)
+          break
+        case 'CallExpression':
+          walkUseStateSetter(node, s)
+          break
+        case 'JSXElement':
+          collectDataIfJsx(node)
+          break
+      }
     },
-    {
-      parserPlugins: state.parserPlugins,
-    },
-  )
+  })
+
+  walkAllDataIfJsx(s)
+
   return s.toString()
 }
-
-console.log(
-  reactMagicKit(`
-function App() {
-  const count = useMagicState(0)
-  const click = () => {
-    setMagicState(count, (prev) => prev + 1)
-  }
-  return <div onClick={click}>{count}</div>
-}
-`),
-)

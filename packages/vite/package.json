@@ -1,5 +1,5 @@
 {
-  "name": "@react-magic-kit/core",
+  "name": "@react-magic-kit/vite",
   "version": "1.0.0",
   "description": "",
   "keywords": [],
@@ -26,12 +26,10 @@
     "test:run": "vitest run"
   },
   "dependencies": {
-    "defu": "^6.1.4",
-    "magic-string": "^0.30.17",
-    "oxc-parser": "^0.82.2",
-    "oxc-walker": "^0.4.0"
+    "@react-magic-kit/core": "workspace:*"
   },
-  "devDependencies": {
-    "@oxc-project/types": "^0.82.2"
+  "devDependencies": {},
+  "peerDependencies": {
+    "vite": "^7.0.0"
   }
 }
