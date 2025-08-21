@@ -1,5 +1,11 @@
 # @react-magic-kit/vite
 
+## 1.0.5
+
+### Patch Changes
+
+- a10f4d2: fixed some bug
+
 ## 1.0.4
 
 ### Patch Changes
