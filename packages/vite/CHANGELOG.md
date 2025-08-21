@@ -1,5 +1,11 @@
 # @react-magic-kit/vite
 
+## 1.0.6
+
+### Patch Changes
+
+- f8259fa: cover more edge cases in data-if handling
+
 ## 1.0.5
 
 ### Patch Changes
