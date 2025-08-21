@@ -4,7 +4,7 @@ import path from 'node:path'
 import oxc from 'oxc-parser'
 import { walk } from 'oxc-walker'
 import { setupDts } from './dts'
-import { collectDataIfJsx, dataIfJsxElements, walkAllDataIfJsx } from './if'
+import { collectDataIfJsx, dataIfJsxInfo, walkAllDataIfJsx } from './if'
 import { DeepOptional, MagicOption, setOptions, state } from './options'
 import { walkUseState, walkUseStateSetter } from './use-state'
 
@@ -13,7 +13,7 @@ export type { DeepOptional, MagicOption }
 export function reactMagicKit(
   sourceCode: string,
   suffix: string,
-  options?: DeepOptional<MagicOption>
+  options?: DeepOptional<MagicOption>,
 ) {
   if (!['js', 'ts', 'jsx', 'tsx'].includes(suffix)) {
     return sourceCode
@@ -29,12 +29,12 @@ export function reactMagicKit(
 
   setOptions(options)
   state.isAddUseStateImport = false
-  dataIfJsxElements.length = 0
+  dataIfJsxInfo.length = 0
 
   const s = new MagicString(sourceCode)
 
   walk(res.program, {
-    enter(node) {
+    enter(node, parent) {
       switch (node.type) {
         case 'VariableDeclarator':
           walkUseState(node, s)
@@ -43,7 +43,7 @@ export function reactMagicKit(
           walkUseStateSetter(node, s)
           break
         case 'JSXElement':
-          collectDataIfJsx(node)
+          collectDataIfJsx(node, parent)
           break
       }
     },

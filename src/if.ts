@@ -1,28 +1,34 @@
 import MagicString from 'magic-string'
-import { JSXElement } from 'oxc-parser'
+import { JSXElement, type Node } from 'oxc-parser'
 import { defaultOptions } from './options'
 
-export const dataIfJsxElements: JSXElement[] = []
+type DataIfJsxInfo = {
+  node: JSXElement
+  parent: Node | null
+}
 
-export function collectDataIfJsx(node: JSXElement) {
+export const dataIfJsxInfo: DataIfJsxInfo[] = []
+
+export function collectDataIfJsx(node: JSXElement, parent: Node | null) {
   const hasDataIf = node.openingElement.attributes.some(
     (attr) =>
       attr.type === 'JSXAttribute' &&
       attr.name.type === 'JSXIdentifier' &&
-      attr.name.name === defaultOptions.if
+      attr.name.name === defaultOptions.if,
   )
   if (!hasDataIf) return
-  dataIfJsxElements.push(node)
+  dataIfJsxInfo.push({ node, parent })
 }
 
 export function walkAllDataIfJsx(s: MagicString) {
-  dataIfJsxElements
-    .sort((a, b) => b.start - a.start)
-    .forEach((node) => walkDataIf(node, s))
-  dataIfJsxElements.length = 0
+  dataIfJsxInfo
+    .sort((a, b) => b.node.start - a.node.start)
+    .forEach((info) => walkDataIf(info, s))
+  dataIfJsxInfo.length = 0
 }
 
-function walkDataIf(node: JSXElement, s: MagicString) {
+function walkDataIf(info: DataIfJsxInfo, s: MagicString) {
+  const { node, parent } = info
   let dataIfValue = ''
 
   for (const attr of node.openingElement.attributes) {
@@ -40,6 +46,10 @@ function walkDataIf(node: JSXElement, s: MagicString) {
   if (dataIfValue) {
     const jsxValue = s.slice(...node.range!)
     const condition = dataIfValue.slice(1, -1)
-    s.overwrite(...node.range!, `{Boolean(${condition}) && (${jsxValue})}`)
+    if (parent?.type === 'JSXElement' || parent?.type === 'JSXFragment') {
+      s.overwrite(...node.range!, `{Boolean(${condition}) && (${jsxValue})}`)
+    } else {
+      s.overwrite(...node.range!, `(Boolean(${condition}) && (${jsxValue}))`)
+    }
   }
 }

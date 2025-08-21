@@ -1,5 +1,12 @@
+import prettier from 'prettier'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import reactMagicKitPlugin from '.'
+
+const format = async (code: string) => {
+  return await prettier.format(code, {
+    parser: 'babel',
+  })
+}
 
 describe('vite-plugin-react-magic-kit', () => {
   let plugin: any
@@ -40,16 +47,70 @@ describe('vite-plugin-react-magic-kit', () => {
       expect(result).toContain('setCount(count + 1)')
     })
 
-    it('should transform JSX files with data-if', () => {
+    it('should transform outer JSX with data-if', async () => {
       const code = `
         export function Component({ show }) {
           return <div abc-if={show}>Content</div>
         }
       `
-      const id = 'src/Component.jsx'
+      const transformed = `
+        export function Component({ show }) {
+          return (Boolean(show) && <div>Content</div>)
+        }
+      `
+      const result = await format(plugin.transform(code, 'test.tsx'))
+      expect(result).toBe(await format(transformed))
+    })
 
-      const result = plugin.transform(code, id)
-      expect(result).toContain('{Boolean(show) &&')
+    it('should transform inner JSX with data-if', async () => {
+      const code = `
+        export function Component({ show }) {
+          return <div>
+            <div abc-if={show}>Content</div>
+          </div>
+        }
+      `
+      const transformed = `
+        export function Component({ show }) {
+          return <div>{Boolean(show) && <div>Content</div>}</div>
+        }
+      `
+      const result = await format(plugin.transform(code, 'test.tsx'))
+      expect(result).toBe(await format(transformed))
+    })
+
+    it('should transform nested JSX with data-if', async () => {
+      const code = `
+        export function Component({ show }) {
+          return <div abc-if={show}>
+              <div abc-if={show}>Content</div>
+          </div>
+        }
+      `
+      const transformed = `
+        export function Component({ show }) {
+          return (Boolean(show) && <div>{Boolean(show) && <div>Content</div>}</div>)
+        }
+      `
+      const result = await format(plugin.transform(code, 'test.tsx'))
+      expect(result).toBe(await format(transformed))
+    })
+
+    it('should transform JSX Fragment with data-if', async () => {
+      const code = `
+        export function Component({ show }) {
+          return <>
+            <div abc-if={show}>Content</div>
+          </>
+        }
+      `
+      const transformed = `
+      export function Component({ show }) {
+        return <>{Boolean(show) && <div>Content</div>}</>
+      }
+      `
+      const result = await format(plugin.transform(code, 'test.tsx'))
+      expect(result).toBe(await format(transformed))
     })
 
     it('should handle TypeScript files', () => {
