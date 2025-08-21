@@ -22,9 +22,9 @@ export const state = {
 export let defaultOptions: MagicOption = {
   state: {
     useState: 'useMagicState',
-    setState: 'setMagicState',
+    setState: 'setState',
   },
-  if: 'magic-if',
+  if: 'data-if',
   dts: 'react-magic-kit.d.ts',
 }
 

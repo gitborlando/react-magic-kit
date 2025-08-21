@@ -29,15 +29,15 @@ describe('vite-plugin-react-magic-kit', () => {
       const code = `
       export function Component() {
           const count = useMagicState(0)
-          const click = () => setTheState(count,count + 1)
+          const click = () => setTheState(count,  count + 1)
           return <div>{count}</div>
         }
       `
       const id = 'src/Component.tsx'
 
       const result = plugin.transform(code, id)
-      expect(result).toContain('useState')
-      expect(result).toContain('setCount')
+      expect(result).toContain('const [count, setCount] = useState(0)')
+      expect(result).toContain('setCount(count + 1)')
     })
 
     it('should transform JSX files with data-if', () => {

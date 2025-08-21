@@ -34,5 +34,5 @@ export function walkUseStateSetter(node: CallExpression, s: MagicString) {
   const setter = `set${id[0].toUpperCase()}${id.slice(1)}`
 
   s.overwrite(...node.callee.range!, setter)
-  s.remove(node.arguments[0].start, node.arguments[1].end)
+  s.remove(node.arguments[0].start, node.arguments[1].start)
 }
